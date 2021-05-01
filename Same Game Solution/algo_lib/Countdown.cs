@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace AiAlgorithms.Algorithms
+namespace Same_Game_Solution.algo_lib
 {
     public class Countdown
     {

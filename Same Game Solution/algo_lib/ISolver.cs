@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace AiAlgorithms.Algorithms
+namespace Same_Game_Solution.algo_lib
 {
     public interface ISolution
     {
