@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Numerics;
+using System.Text;
 
 namespace Same_Game_Solution.engine
 {
@@ -9,14 +11,14 @@ namespace Same_Game_Solution.engine
     {
         private int[][] board;
         private int score;
-        private bool terminal;
+        private bool terminal = false;
 
-        public GameState(int[][] board, int score)
+        public GameState(int[][] board, int score, bool terminal = false)
         {
             this.board = board;
             this.score = score;
+            this.terminal = terminal;
         }
-        
 
         public GameState deleteBlock(Block turn)
         {
@@ -45,12 +47,33 @@ namespace Same_Game_Solution.engine
 
         public GameState copy()
         {
-            return new GameState(board, score);
+            return new GameState(board, score, terminal);
         }
 
         public HashSet<Block> legals()
         {
-            return null;
+            HashSet<Block> blocks = new HashSet<Block>();
+            HashSet<Tuple<int,int>> visited = new HashSet<Tuple<int, int>>();
+
+            for (int x = 0; x < board.Length; x++)
+            {
+                for (int y = 0; y < board[0].Length; y++)
+                {
+                    if (board[x][y] == -1 || visited.Contains(new Tuple<int, int>(x,y)))
+                        continue;
+                    Block block = computeBlock(x, y);
+                    if (block.size < 2)
+                        continue;
+                    blocks.Add(block);
+
+                    foreach (var point in block.points)
+                    {
+                        visited.Add(point);    
+                    }
+                }
+            }
+            
+            return blocks;
         }
         
         private void normalizeVertically()
@@ -97,7 +120,7 @@ namespace Same_Game_Solution.engine
             }
         }
         
-        private HashSet<Tuple<int, int>> computeBlock(int x, int y)
+        private Block computeBlock(int x, int y)
         {
             int color = board[x][y];
             HashSet<Tuple<int, int>> region = new HashSet<Tuple<int, int>>();
@@ -136,21 +159,42 @@ namespace Same_Game_Solution.engine
                 visited.Add(up);
             }
 
-            return region;
+            return new Block(region, color) ;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var row in board)
+            {
+                sb.AppendLine(String.Join(" ", row));
+            }
+            return sb.ToString();
         }
     }
 
     public class Block
     {
-        public readonly Collection<Tuple<int, int>> points;
+        public readonly ICollection<Tuple<int, int>> points;
         public readonly int color;
-        public readonly int size;
-        
-        public Block(Collection<Tuple<int, int>> points, int color, int size)
+        public int size => points.Count;
+
+        public Block(ICollection<Tuple<int, int>> points, int color)
         {
             this.points = points;
             this.color = color;
-            this.size = size;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (Tuple<int,int> point in points)
+            {
+                sb.Append(point.ToString() + "\t");
+            }
+            sb.Append(color);
+
+            return sb.ToString();
         }
     }
 }
