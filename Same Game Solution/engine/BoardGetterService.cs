@@ -1,6 +1,6 @@
 ﻿namespace Same_Game_Solution.engine
 {
-    public interface BoardGetterService
+    public interface IBoardGetterService
     {
         int[][] getBoard();
     }
