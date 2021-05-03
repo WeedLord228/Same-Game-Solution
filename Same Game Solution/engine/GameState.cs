@@ -26,10 +26,10 @@ namespace Same_Game_Solution.engine
             {
                 board[point.Item1][point.Item2] = -1;
             }
-            
-            normalizeHorizontaly();
+
             normalizeVertically();
-            
+            normalizeHorizontally();
+
             GameState gameState = new GameState(board, score + (turn.size - 2) * (turn.size - 2));
 
             if (gameState.legals().Count != 0)
@@ -42,6 +42,7 @@ namespace Same_Game_Solution.engine
             {
                 score += 1000;
             }
+
             return this;
         }
 
@@ -53,13 +54,13 @@ namespace Same_Game_Solution.engine
         public HashSet<Block> legals()
         {
             HashSet<Block> blocks = new HashSet<Block>();
-            HashSet<Tuple<int,int>> visited = new HashSet<Tuple<int, int>>();
+            HashSet<Tuple<int, int>> visited = new HashSet<Tuple<int, int>>();
 
             for (int x = 0; x < board.Length; x++)
             {
                 for (int y = 0; y < board[0].Length; y++)
                 {
-                    if (board[x][y] == -1 || visited.Contains(new Tuple<int, int>(x,y)))
+                    if (board[x][y] == -1 || visited.Contains(new Tuple<int, int>(x, y)))
                         continue;
                     Block block = computeBlock(x, y);
                     if (block.size < 2)
@@ -68,67 +69,67 @@ namespace Same_Game_Solution.engine
 
                     foreach (var point in block.points)
                     {
-                        visited.Add(point);    
+                        visited.Add(point);
                     }
                 }
             }
-            
+
             return blocks;
         }
-        
-        private void normalizeVertically()
+
+        private void normalizeHorizontally()
         {
-            for (int x=0; x < board.Length; x++)
+            for (int y = 0; y < board.Length; y++)
             {
-                for (int y=0; y < board[0].Length; y++)
+                for (int x = 0; x < board[0].Length; x++)
                 {
-                    if (board[x][y] != -1)
+                    if (board[y][x] != -1)
                         continue;
 
-                    int gapEnd = y+1;
-                    while (gapEnd < board[0].Length && board[x][gapEnd]==-1)
+                    int gapEnd = x + 1;
+                    while (gapEnd < board[0].Length && board[y][gapEnd] == -1)
                         gapEnd++;
 
-                    if (gapEnd==board[0].Length)
+                    if (gapEnd == board[0].Length)
                         break; // column checked
-                    board[x][y] = board[x][gapEnd];
-                    board[x][gapEnd] = -1;
+                    board[y][x] = board[y][gapEnd];
+                    board[y][gapEnd] = -1;
                 }
             }
         }
-        
-        private void normalizeHorizontaly()
+
+        private void normalizeVertically()
         {
-            for (int x=0; x < board.Length; x++)
+            for (int y = 0; y < board.Length; y++)
             {
-                if (board[x][0] != -1)
+                if (board[y][0] != -1)
                     continue;
 
-                int gapEnd = x+1;
+                int gapEnd = y + 1;
 
-                while (gapEnd < board.Length && board[gapEnd][0]==-1)
+                while (gapEnd < board.Length && board[gapEnd][0] == -1)
                     gapEnd++;
 
-                if (gapEnd==board.Length)
+                if (gapEnd == board.Length)
                     return; // all columns checked
 
-                for (int y=0; y < board[0].Length; y++)
+                for (int x = 0; x < board[0].Length; x++)
                 {
-                    board[x][y] = board[gapEnd][y];
-                    board[gapEnd][y] = -1;
+                    board[y][x] = board[gapEnd][x];
+                    board[gapEnd][x] = -1;
                 }
             }
         }
-        
+
         private Block computeBlock(int x, int y)
         {
             int color = board[x][y];
             HashSet<Tuple<int, int>> region = new HashSet<Tuple<int, int>>();
-            HashSet<Tuple<int, int>> visited = new HashSet<Tuple<int, int>>(); 
+            HashSet<Tuple<int, int>> visited = new HashSet<Tuple<int, int>>();
             Queue<Tuple<int, int>> open = new Queue<Tuple<int, int>>();
 
-            open.Enqueue(new Tuple<int, int>(x,y));
-            visited.Add(new Tuple<int, int>(x,y));
+            open.Enqueue(new Tuple<int, int>(x, y));
+            visited.Add(new Tuple<int, int>(x, y));
 
             while (open.Count != 0)
             {
@@ -138,37 +139,39 @@ namespace Same_Game_Solution.engine
 
                 region.Add(xxyy);
 
-                Tuple<int, int> left = new Tuple<int, int>(xxyy.Item1 -1, xxyy.Item2);
-                if (xxyy.Item1 >0 && board[left.Item1][left.Item2]==color && !visited.Contains(left))
-                    open.Enqueue(left);
-                visited.Add(left);
+                Tuple<int, int> up = new Tuple<int, int>(xxyy.Item1 - 1, xxyy.Item2);
+                if (xxyy.Item1 > 0 && board[up.Item1][up.Item2] == color && !visited.Contains(up))
+                    open.Enqueue(up);
+                visited.Add(up);
 
-                Tuple<int, int> right = new Tuple<int, int>(xxyy.Item1+1,xxyy.Item2) ;
-                if (xxyy.Item1 <board.Length-1 && board[right.Item1][right.Item2]==color && !visited.Contains(right))
-                    open.Enqueue(right);
-                visited.Add(right);
-
-                Tuple<int, int> down = new Tuple<int,int>(xxyy.Item1, xxyy.Item2-1);
-                if (xxyy.Item2 >0 && board[down.Item1][down.Item2]==color && !visited.Contains(down))
+                Tuple<int, int> down = new Tuple<int, int>(xxyy.Item1 + 1, xxyy.Item2);
+                if (xxyy.Item1 < board.Length - 1 && board[down.Item1][down.Item2] == color && !visited.Contains(down))
                     open.Enqueue(down);
                 visited.Add(down);
 
-                Tuple<int, int> up = new Tuple<int,int>(xxyy.Item1, xxyy.Item2+1);
-                if (xxyy.Item2 <board[0].Length-1 && board[up.Item1][up.Item2]==color && !visited.Contains(up))
-                    open.Enqueue(up);
-                visited.Add(up);
+                Tuple<int, int> left = new Tuple<int, int>(xxyy.Item1, xxyy.Item2 - 1);
+                if (xxyy.Item2 > 0 && board[left.Item1][left.Item2] == color && !visited.Contains(left))
+                    open.Enqueue(left);
+                visited.Add(left);
+
+                Tuple<int, int> right = new Tuple<int, int>(xxyy.Item1, xxyy.Item2 + 1);
+                if (xxyy.Item2 < board[0].Length - 1 && board[right.Item1][right.Item2] == color &&
+                    !visited.Contains(right))
+                    open.Enqueue(right);
+                visited.Add(right);
             }
 
-            return new Block(region, color) ;
+            return new Block(region, color);
         }
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (var row in board)
+            foreach (var row in board.Reverse())
             {
                 sb.AppendLine(String.Join(" ", row));
             }
+
             return sb.ToString();
         }
     }
@@ -188,10 +191,11 @@ namespace Same_Game_Solution.engine
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (Tuple<int,int> point in points)
+            foreach (Tuple<int, int> point in points)
             {
                 sb.Append(point.ToString() + "\t");
             }
+
             sb.Append(color);
 
             return sb.ToString();
