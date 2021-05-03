@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Numerics;
 using System.Text;
 
 namespace Same_Game_Solution.engine
@@ -11,7 +9,7 @@ namespace Same_Game_Solution.engine
     {
         private int[][] board;
         private int score;
-        private bool terminal = false;
+        public bool terminal = false;
 
         public GameState(int[][] board, int score, bool terminal = false)
         {
@@ -28,7 +26,7 @@ namespace Same_Game_Solution.engine
             }
 
             normalizeVertically();
-            normalizeHorizontally();
+            // normalizeHorizontally();
 
             GameState gameState = new GameState(board, score + (turn.size - 2) * (turn.size - 2));
 
@@ -100,23 +98,26 @@ namespace Same_Game_Solution.engine
 
         private void normalizeVertically()
         {
-            for (int y = 0; y < board.Length; y++)
+            for (int i = board.Length - 1; i >= 0; i--)
             {
-                if (board[y][0] != -1)
-                    continue;
-
-                int gapEnd = y + 1;
-
-                while (gapEnd < board.Length && board[gapEnd][0] == -1)
-                    gapEnd++;
-
-                if (gapEnd == board.Length)
-                    return; // all columns checked
-
-                for (int x = 0; x < board[0].Length; x++)
+                for (int j = 0; j < board[0].Length; j++)
                 {
-                    board[y][x] = board[gapEnd][x];
-                    board[gapEnd][x] = -1;
+                    if (board[i][j] != -1)
+                    {
+                        continue;
+                    }
+
+                    var gapEnd = i - 1;
+                    while (i < board.Length && board[gapEnd][j] == 1)
+                    {
+                        gapEnd--;
+                    }
+
+                    for (int cooler_i = 0; cooler_i < gapEnd + 1; cooler_i++)
+                    {
+                        board[i - cooler_i][j] = board[gapEnd - cooler_i][j];
+                        board[gapEnd - cooler_i][j] = -1;
+                    }
                 }
             }
         }

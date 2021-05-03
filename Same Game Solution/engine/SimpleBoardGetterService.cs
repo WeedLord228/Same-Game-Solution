@@ -1,4 +1,6 @@
-﻿namespace Same_Game_Solution.engine
+﻿using System.Linq;
+
+namespace Same_Game_Solution.engine
 {
     public class SimpleBoardGetterService : IBoardGetterService
     {
