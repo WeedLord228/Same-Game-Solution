@@ -96,28 +96,58 @@ namespace Same_Game_Solution.engine
             }
         }
 
+        // private void normalizeVertically()
+        // {
+        //     for (int i = board.Length - 1; i >= 0; i--)
+        //     {
+        //         for (int j = 0; j < board[0].Length; j++)
+        //         {
+        //             if (board[i][j] != -1)
+        //             {
+        //                 continue;
+        //             }
+        //
+        //             var gapEnd = i > 0 ? i - 1 : 0;
+        //             // var gapEnd = i - 1;
+        //             while (i < board.Length && board[gapEnd][j] == -1)
+        //             {
+        //                 gapEnd--;
+        //             }
+        //
+        //             for (int cooler_i = 0; cooler_i < gapEnd + 1; cooler_i++)
+        //             {
+        //                 board[i - cooler_i][j] = board[gapEnd - cooler_i][j];
+        //                 board[gapEnd - cooler_i][j] = -1;
+        //             }
+        //         }
+        //     }
+        // }
+        
         private void normalizeVertically()
         {
-            for (int i = board.Length - 1; i >= 0; i--)
+            for (int x = 0; x < board[0].Length; x++)
             {
-                for (int j = 0; j < board[0].Length; j++)
+                for (int y = 0; y < board.Length; y++)
                 {
-                    if (board[i][j] != -1)
+                    if (board[y][x] != -1)
                     {
                         continue;
                     }
 
-                    var gapEnd = i - 1;
-                    while (i < board.Length && board[gapEnd][j] == 1)
+                    var gapEnd = y + 1;
+                    
+                    while (gapEnd < board.Length && board[gapEnd][x] == -1)
                     {
-                        gapEnd--;
+                        gapEnd++;
                     }
 
-                    for (int cooler_i = 0; cooler_i < gapEnd + 1; cooler_i++)
+                    if (gapEnd == board.Length)
                     {
-                        board[i - cooler_i][j] = board[gapEnd - cooler_i][j];
-                        board[gapEnd - cooler_i][j] = -1;
+                        break;
                     }
+                    
+                    board[y][x] = board[gapEnd][x];
+                    board[gapEnd][x] = -1;
                 }
             }
         }
