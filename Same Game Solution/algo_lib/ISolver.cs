@@ -15,6 +15,7 @@ namespace Same_Game_Solution.algo_lib
         ///     sequence of solution improvements. The last one is the best one.
         ///     You may return only one the best solution, but sequence of improvements can help in debugging
         /// </returns>
-        IEnumerable<TSolution> GetSolutions(TProblem problem, Countdown countdown);
+        IEnumerable<SameGameSolution> GetSolutions(TProblem problem);
+        // IEnumerable<TSolution> GetSolutions(TProblem problem, Countdown countdown);
     }
 }

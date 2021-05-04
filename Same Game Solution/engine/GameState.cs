@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
 namespace Same_Game_Solution.engine
@@ -9,7 +12,12 @@ namespace Same_Game_Solution.engine
     {
         private int[][] board;
         private int score;
-        public bool terminal = false;
+
+        public int Score => score;
+
+        private bool terminal;
+
+        public bool Terminal => terminal;
 
         public GameState(int[][] board, int score, bool terminal = false)
         {
@@ -43,10 +51,21 @@ namespace Same_Game_Solution.engine
 
             return this;
         }
-
+        
         public GameState copy()
         {
-            return new GameState(board, score, terminal);
+            int[][] newBoard = new int[board.Length][];
+            
+            for (int y = 0; y < board.Length; y++)
+            {
+                newBoard[y] = new int[board[0].Length];
+                for (int x = 0; x < board[0].Length; x++)
+                {
+                    newBoard[y][x] = board[y][x];
+                }        
+            }
+            
+            return new GameState(newBoard, score, terminal);
         }
 
         public HashSet<Block> legals()
@@ -103,33 +122,6 @@ namespace Same_Game_Solution.engine
                 }
             }
         }
-
-        // private void normalizeVertically()
-        // {
-        //     for (int i = board.Length - 1; i >= 0; i--)
-        //     {
-        //         for (int j = 0; j < board[0].Length; j++)
-        //         {
-        //             if (board[i][j] != -1)
-        //             {
-        //                 continue;
-        //             }
-        //
-        //             var gapEnd = i > 0 ? i - 1 : 0;
-        //             // var gapEnd = i - 1;
-        //             while (i < board.Length && board[gapEnd][j] == -1)
-        //             {
-        //                 gapEnd--;
-        //             }
-        //
-        //             for (int cooler_i = 0; cooler_i < gapEnd + 1; cooler_i++)
-        //             {
-        //                 board[i - cooler_i][j] = board[gapEnd - cooler_i][j];
-        //                 board[gapEnd - cooler_i][j] = -1;
-        //             }
-        //         }
-        //     }
-        // }
         
         private void normalizeVertically()
         {
