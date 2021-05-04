@@ -26,7 +26,7 @@ namespace Same_Game_Solution.engine
             }
 
             normalizeVertically();
-            // normalizeHorizontally();
+            normalizeHorizontally();
 
             GameState gameState = new GameState(board, score + (turn.size - 2) * (turn.size - 2));
 
@@ -77,19 +77,27 @@ namespace Same_Game_Solution.engine
 
         private void normalizeHorizontally()
         {
-            for (int y = 0; y < board.Length; y++)
+            for (int x = 0; x < board[0].Length; x++)
             {
-                for (int x = 0; x < board[0].Length; x++)
+                if (board[0][x] != -1)
                 {
-                    if (board[y][x] != -1)
-                        continue;
+                    continue;
+                }
 
-                    int gapEnd = x + 1;
-                    while (gapEnd < board[0].Length && board[y][gapEnd] == -1)
-                        gapEnd++;
+                int gapEnd = x + 1;
 
-                    if (gapEnd == board[0].Length)
-                        break; // column checked
+                while (gapEnd < board[0].Length && board[0][gapEnd] == -1)
+                {
+                    gapEnd++;
+                }
+
+                if (gapEnd == board[0].Length)
+                {
+                    return;
+                }
+
+                for (int y = 0; y < board.Length; y++)
+                {
                     board[y][x] = board[y][gapEnd];
                     board[y][gapEnd] = -1;
                 }

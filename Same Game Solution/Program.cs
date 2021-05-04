@@ -27,11 +27,11 @@ namespace Same_Game_Solution
             // };
             int[][] board =
             {
-                new int[] {4, 4, 5, 5},
-                new int[] {4, 3, 3, 1},
-                new int[] {1, 1, 8, 1},
-                new int[] {1, 1, 1, 1},
-                new int[] {7, 7, 6, 6}
+                new int[] {4, 4, 1, 9},
+                new int[] {4, 3, 1, 9},
+                new int[] {1, 1, 1, 9},
+                new int[] {1, 1, 1, 9},
+                new int[] {7, 7, 1, 9}
             };
 
             _sbgt = new SimpleBoardGetterService(board);
@@ -44,7 +44,7 @@ namespace Same_Game_Solution
                 Console.WriteLine(block.ToString());
             }
             
-            Block turn1 = legals.First(x => x.color == 4);
+            Block turn1 = legals.First(x => x.color == 1);
             GameState newGameState = initialGameState.deleteBlock(turn1);
             // Console.WriteLine(newGameState.terminal);
             Console.WriteLine("TURN 1: " + turn1.ToString());
