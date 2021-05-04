@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Same_Game_Solution.algo_lib;
 using Same_Game_Solution.engine;
 
 namespace Same_Game_Solution
@@ -43,18 +44,33 @@ namespace Same_Game_Solution
             {
                 Console.WriteLine(block.ToString());
             }
-            
-            Block turn1 = legals.First(x => x.color == 1);
-            GameState newGameState = initialGameState.deleteBlock(turn1);
-            // Console.WriteLine(newGameState.terminal);
-            Console.WriteLine("TURN 1: " + turn1.ToString());
-            _visualizer.render(newGameState);
-            Console.WriteLine("LEGALS 1:");
-            HashSet<Block> legals1 = newGameState.legals();
-            foreach (Block block in legals1)
+
+            ISolver<GameState, SameGameSolution> greedySolver = new GreedySolver();
+            SameGameSolution sameGameSolution = greedySolver.GetSolutions(initialGameState).First();
+
+            Console.WriteLine();
+            Console.WriteLine("GAME ! ! ! ! ! ");
+            foreach (Block block in sameGameSolution.Turns)
             {
-                Console.WriteLine(block.ToString());
+                Console.WriteLine(block);
+                Console.WriteLine();
+                Console.WriteLine(initialGameState.deleteBlock(block).ToString());
             }
+            
+            Console.WriteLine();
+            Console.WriteLine("FINAL SCORE:" + sameGameSolution.Score);
+
+            // Block turn1 = legals.First(x => x.color == 1);
+            // GameState newGameState = initialGameState.deleteBlock(turn1);
+            // // Console.WriteLine(newGameState.terminal);
+            // Console.WriteLine("TURN 1: " + turn1.ToString());
+            // _visualizer.render(newGameState);
+            // Console.WriteLine("LEGALS 1:");
+            // HashSet<Block> legals1 = newGameState.legals();
+            // foreach (Block block in legals1)
+            // {
+            //     Console.WriteLine(block.ToString());
+            // }
         }
     }
 }
