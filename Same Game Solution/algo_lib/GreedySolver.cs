@@ -23,12 +23,12 @@ namespace Same_Game_Solution.algo_lib
         // public IEnumerable<SameGameSolution> GetSolutions(GameState problem, Countdown countdown)
         public IEnumerable<SameGameSolution> GetSolutions(GameState problem)
         {
-            GameState coolerProblem = problem.copy();
-            HashSet<Block> legals = coolerProblem.legals();
-            List<Block> result = new List<Block>();
+            var coolerProblem = problem.copy();
+            var legals = coolerProblem.legals();
+            var result = new List<Block>();
             while (legals.Count != 0)
             {
-                Block curBlock = getNextTurn(coolerProblem);
+                var curBlock = getNextTurn(coolerProblem);
                 result.Add(curBlock);
                 coolerProblem.deleteBlock(curBlock);
                 legals = coolerProblem.legals();
@@ -39,16 +39,16 @@ namespace Same_Game_Solution.algo_lib
 
         private Block getNextTurn(GameState curGameState)
         {
-            HashSet<Block> initialLegals = curGameState.legals();
+            var initialLegals = curGameState.legals();
             Block bestTurn = null;
-            double bestTurnScore = Double.MinValue;
+            var bestTurnScore = Double.MinValue;
             
             
-            foreach (Block block in initialLegals)
+            foreach (var block in initialLegals)
             {
-                GameState mutableGameState = curGameState.copy();
+                var mutableGameState = curGameState.copy();
                 mutableGameState.deleteBlock(block);
-                double curScore = _estimator.Estimate(mutableGameState);
+                var curScore = _estimator.Estimate(mutableGameState);
                 if (curScore > bestTurnScore)
                 {
                     bestTurn = block;

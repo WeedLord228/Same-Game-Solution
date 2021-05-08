@@ -9,7 +9,7 @@ namespace Same_Game_Solution.algo_lib
         public double Estimate(GameState gameState)
         {
             double result = 0;
-            foreach (Block block in gameState.legals())
+            foreach (var block in gameState.legals())
             {
                 result += (block.size - 2) * (block.size - 2);
             }

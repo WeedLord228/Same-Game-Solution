@@ -36,26 +36,26 @@ namespace Same_Game_Solution
             };
 
             _sbgt = new SimpleBoardGetterService(board);
-            GameState initialGameState = new GameState(_sbgt.getBoard(), 0);
+            var initialGameState = new GameState(_sbgt.getBoard(), 0);
             _visualizer.render(initialGameState);
             Console.WriteLine("LEGALS:");
-            HashSet<Block> legals = initialGameState.legals();
-            foreach (Block block in legals)
+            var legals = initialGameState.legals();
+            foreach (var block in legals)
             {
                 Console.WriteLine(block.ToString());
             }
 
-            SimpleScoreEstimator simpleScoreEstimator = new SimpleScoreEstimator();
-            BoardwiseScoreEstimator boardwiseScoreEstimator = new BoardwiseScoreEstimator();
+            var simpleScoreEstimator = new SimpleScoreEstimator();
+            var boardwiseScoreEstimator = new BoardwiseScoreEstimator();
 
             #region Simple Score
 
-            GreedySolver greedySolver = new GreedySolver(simpleScoreEstimator);
-            SameGameSolution sameGameSimpleSolution = greedySolver.GetSolutions(initialGameState.copy()).First();
+            var greedySolver = new GreedySolver(simpleScoreEstimator);
+            var sameGameSimpleSolution = greedySolver.GetSolutions(initialGameState.copy()).First();
 
             Console.WriteLine();
             Console.WriteLine("SIMPLE SCORE GAME ! ! ! ! ! ");
-            foreach (Block block in sameGameSimpleSolution.Turns)
+            foreach (var block in sameGameSimpleSolution.Turns)
             {
                 Console.WriteLine(block);
                 Console.WriteLine();
