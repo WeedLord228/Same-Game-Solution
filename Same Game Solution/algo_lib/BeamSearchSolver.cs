@@ -11,6 +11,7 @@ namespace Same_Game_Solution.algo_lib
         private int beamWidth;
         private int depth;
         private IEstimator _estimator;
+        private static int count;
 
         public BeamSearchSolver(int beamWidth, int depth, IEstimator _estimator)
         {
@@ -26,7 +27,7 @@ namespace Same_Game_Solution.algo_lib
             var legals = currentProblem.legals();
             var result = new List<Block>();
             var root = new TreeNode<Block>(
-                0, new List<TreeNode<Block>>(), null, null, currentProblem);
+                0, null, null, null, currentProblem);
             var searchTree = new Tree<Block>(root);
             while (!currentProblem.Terminal)
             {
@@ -41,6 +42,15 @@ namespace Same_Game_Solution.algo_lib
 
         private void ApplyRecurssion(TreeNode<Block> node, int depth)
         {
+            var nextTurns = getNextTurns(node.GameState);
+
+            if (nextTurns.Count == 0)
+            {
+                node.Score = _estimator.Estimate(node.GameState);
+                count++;
+                return;
+            }
+            
             if (depth == this.depth)
             {
                 return;
@@ -48,7 +58,8 @@ namespace Same_Game_Solution.algo_lib
 
             if (node.Childs == null)
             {
-                foreach (var turn in getNextTurns(node.GameState))
+                node.Childs = new List<TreeNode<Block>>();
+                foreach (var turn in nextTurns)
                 {
                     var currentGameState = node.GameState.copy();
                     currentGameState.deleteBlock(turn.Item1);
@@ -76,7 +87,7 @@ namespace Same_Game_Solution.algo_lib
                 bestTurns.Add((block, curScore));
             }
 
-            bestTurns.Sort((x, y) => x.Item2.CompareTo(y.Item2));
+            bestTurns.Sort((x, y) => y.Item2.CompareTo(x.Item2));
             return bestTurns.Take(beamWidth).ToList();
         }
     }

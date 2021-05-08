@@ -46,7 +46,7 @@ namespace Same_Game_Solution.engine
             terminal = true;
             if (board[0][0] == -1)
             {
-                score += 1000;
+                score += board.Length * board[0].Length;
             }
         }
         

@@ -28,8 +28,8 @@ namespace Same_Game_Solution
             // };
             int[][] board =
             {
+                new int[] {1, 1, 7, 9},
                 new int[] {4, 4, 1, 9},
-                new int[] {4, 3, 1, 9},
                 new int[] {1, 1, 1, 9},
                 new int[] {1, 1, 1, 9},
                 new int[] {7, 7, 1, 9}
@@ -47,15 +47,17 @@ namespace Same_Game_Solution
 
             var simpleScoreEstimator = new SimpleScoreEstimator();
             var boardwiseScoreEstimator = new BoardwiseScoreEstimator();
+            var beamSearchScroeEstimator = new BeamSearchBoardwiseEstimator();
 
-            #region Simple Score
-
-            var greedySolver = new GreedySolver(simpleScoreEstimator);
-            var sameGameSimpleSolution = greedySolver.GetSolutions(initialGameState.copy()).First();
+            var beamSearchSolver = new BeamSearchSolver(2, 2, beamSearchScroeEstimator);
+            // var beamSearchSolver = new GreedySolver(boardwiseScoreEstimator);
+            var greedySolver = new GreedySolver(boardwiseScoreEstimator);
+            // var sameGameSimpleSolution = greedySolver.GetSolutions(initialGameState.copy()).First();
+            var sameGameBeamSearchSolution = beamSearchSolver.GetSolutions(initialGameState.copy()).First();
 
             Console.WriteLine();
             Console.WriteLine("SIMPLE SCORE GAME ! ! ! ! ! ");
-            foreach (var block in sameGameSimpleSolution.Turns)
+            foreach (var block in sameGameBeamSearchSolution.Turns)
             {
                 Console.WriteLine(block);
                 Console.WriteLine();
@@ -64,8 +66,7 @@ namespace Same_Game_Solution
             }
             
             Console.WriteLine();
-            Console.WriteLine("FINAL SCORE:" + sameGameSimpleSolution.Score);
-            #endregion
+            Console.WriteLine("FINAL SCORE:" + initialGameState.Score);
 //------------------------------------------------------------------------------------------------------------------------
 
             //
