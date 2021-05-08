@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Same_Game_Solution.engine;
 
 namespace Same_Game_Solution.algo_lib
@@ -24,6 +25,21 @@ namespace Same_Game_Solution.algo_lib
             this.Batya = batya;
             this.Data = data;
             this.GameState = gameState;
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            // sb.Append(Score);
+            sb.Append("TURN :" + Data);
+            sb.Append("\n");
+            sb.Append("GAME STATE :\n" + GameState);
+            sb.Append("\n");
+            sb.Append("SCORE :\n" + GameState.Score);
+            sb.Append("\n");
+            sb.Append("EVALUATED :\n" + Score);
+            
+            return sb.ToString();
         }
     }
 
@@ -57,7 +73,6 @@ namespace Same_Game_Solution.algo_lib
                 }
             }
 
-            Console.WriteLine("ALLL LEAVESSS!  :"+ allLeaves.Count);
             var maxScore = allLeaves.Max(x => x.Score);
             return allLeaves.First(x => x.Score == maxScore);
         }

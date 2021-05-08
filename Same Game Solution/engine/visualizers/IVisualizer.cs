@@ -1,7 +1,7 @@
 ﻿namespace Same_Game_Solution.engine
 {
-    public interface IVisualizer
+    public interface IVisualizer<T>
     {
-        public void render(GameState gameState);
+        public void render(T toRender);
     }
 }

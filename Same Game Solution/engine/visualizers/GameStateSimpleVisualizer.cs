@@ -2,9 +2,9 @@
 
 namespace Same_Game_Solution.engine
 {
-    class SimpleConsoleVisualizer : IVisualizer
+    class GameStateSimpleVisualizer : IVisualizer<GameState>
     {
-        public SimpleConsoleVisualizer()
+        public GameStateSimpleVisualizer()
         {
         }
         

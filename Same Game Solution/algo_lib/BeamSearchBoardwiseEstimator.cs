@@ -12,7 +12,7 @@ namespace Same_Game_Solution.algo_lib
                 result += (block.size - 2) * (block.size - 2) * 100000;
             }
 
-            result += gameState.Score;
+            result += gameState.Score; 
             return result;
         }
     }

@@ -12,6 +12,7 @@ namespace Same_Game_Solution.algo_lib
         private int depth;
         private IEstimator _estimator;
         private static int count;
+        public Tree<Block> SearchTree { get; set; }
 
         public BeamSearchSolver(int beamWidth, int depth, IEstimator _estimator)
         {
@@ -28,16 +29,16 @@ namespace Same_Game_Solution.algo_lib
             var result = new List<Block>();
             var root = new TreeNode<Block>(
                 0, null, null, null, currentProblem);
-            var searchTree = new Tree<Block>(root);
+            SearchTree = new Tree<Block>(root);
             while (!currentProblem.Terminal)
             {
                 ApplyRecurssion(root, 0);
-                root = searchTree.BestLeaf;
+                root = SearchTree.BestLeaf;
                 currentProblem = root.GameState;
             }
 
-            var bestPath = searchTree.GetBestPath();
-            yield return new SameGameSolution(bestPath.ToArray(), searchTree.BestLeaf.GameState.Score);
+            var bestPath = SearchTree.GetBestPath();
+            yield return new SameGameSolution(bestPath.ToArray(), SearchTree.BestLeaf.GameState.Score);
         }
 
         private void ApplyRecurssion(TreeNode<Block> node, int depth)
