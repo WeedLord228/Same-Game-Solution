@@ -26,7 +26,7 @@ namespace Same_Game_Solution.engine
             this.terminal = terminal;
         }
 
-        public GameState deleteBlock(Block turn)
+        public void deleteBlock(Block turn)
         {
             foreach (var point in turn.points)
             {
@@ -36,20 +36,18 @@ namespace Same_Game_Solution.engine
             normalizeVertically();
             normalizeHorizontally();
 
-            GameState gameState = new GameState(board, score + (turn.size - 2) * (turn.size - 2));
+            score = score + (turn.size - 2) * (turn.size - 2);
 
-            if (gameState.legals().Count != 0)
+            if (legals().Count != 0)
             {
-                return gameState;
+                return;
             }
 
-            this.terminal = true;
+            terminal = true;
             if (board[0][0] == -1)
             {
                 score += 1000;
             }
-
-            return this;
         }
         
         public GameState copy()

@@ -8,6 +8,18 @@ namespace Same_Game_Solution.algo_lib
 {
     public class GreedySolver : ISolver<GameState, SameGameSolution >
     {
+        private IEstimator _estimator;
+
+        public GreedySolver(IEstimator estimator)
+        {
+            _estimator = estimator;
+        }
+
+        public void changeEstimator(IEstimator estimator)
+        {
+            _estimator = estimator;
+        }
+
         // public IEnumerable<SameGameSolution> GetSolutions(GameState problem, Countdown countdown)
         public IEnumerable<SameGameSolution> GetSolutions(GameState problem)
         {
@@ -16,14 +28,34 @@ namespace Same_Game_Solution.algo_lib
             List<Block> result = new List<Block>();
             while (legals.Count != 0)
             {
-                IEnumerable<Block> maxBlocks = legals.Where(x => x.size == legals.Max(y => y.size));
-                Block curBlock = maxBlocks.First();
+                Block curBlock = getNextTurn(coolerProblem);
                 result.Add(curBlock);
-                coolerProblem = coolerProblem.deleteBlock(curBlock);
+                coolerProblem.deleteBlock(curBlock);
                 legals = coolerProblem.legals();
             }
 
             yield return new SameGameSolution(result.ToArray(), coolerProblem.Score);
+        }
+
+        private Block getNextTurn(GameState curGameState)
+        {
+            HashSet<Block> initialLegals = curGameState.legals();
+            Block bestTurn = null;
+            double bestTurnScore = Double.MinValue;
+            
+            
+            foreach (Block block in initialLegals)
+            {
+                GameState mutableGameState = curGameState.copy();
+                mutableGameState.deleteBlock(block);
+                double curScore = _estimator.Estimate(mutableGameState);
+                if (curScore > bestTurnScore)
+                {
+                    bestTurn = block;
+                    bestTurnScore = curScore;
+                }
+            }
+            return bestTurn;
         }
     }
 }

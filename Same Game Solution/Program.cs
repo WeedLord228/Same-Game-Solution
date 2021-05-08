@@ -45,20 +45,50 @@ namespace Same_Game_Solution
                 Console.WriteLine(block.ToString());
             }
 
-            ISolver<GameState, SameGameSolution> greedySolver = new GreedySolver();
-            SameGameSolution sameGameSolution = greedySolver.GetSolutions(initialGameState).First();
+            SimpleScoreEstimator simpleScoreEstimator = new SimpleScoreEstimator();
+            BoardwiseScoreEstimator boardwiseScoreEstimator = new BoardwiseScoreEstimator();
+
+            #region Simple Score
+
+            GreedySolver greedySolver = new GreedySolver(simpleScoreEstimator);
+            SameGameSolution sameGameSimpleSolution = greedySolver.GetSolutions(initialGameState.copy()).First();
 
             Console.WriteLine();
-            Console.WriteLine("GAME ! ! ! ! ! ");
-            foreach (Block block in sameGameSolution.Turns)
+            Console.WriteLine("SIMPLE SCORE GAME ! ! ! ! ! ");
+            foreach (Block block in sameGameSimpleSolution.Turns)
             {
                 Console.WriteLine(block);
                 Console.WriteLine();
-                Console.WriteLine(initialGameState.deleteBlock(block).ToString());
+                initialGameState.deleteBlock(block);
+                Console.WriteLine(initialGameState.ToString());
             }
             
             Console.WriteLine();
-            Console.WriteLine("FINAL SCORE:" + sameGameSolution.Score);
+            Console.WriteLine("FINAL SCORE:" + sameGameSimpleSolution.Score);
+            #endregion
+//------------------------------------------------------------------------------------------------------------------------
+
+            //
+            // #region Boardwise Score
+            //
+            // BoardwiseScoreEstimator boardwiseScoreEstimator = new BoardwiseScoreEstimator();
+            // greedySolver.changeEstimator(boardwiseScoreEstimator);
+            // SameGameSolution sameGameBoardwiseSolution = greedySolver.GetSolutions(initialGameState).First();
+            //
+            // Console.WriteLine();
+            // Console.WriteLine("BOARDWISE SCORE GAME ! ! ! ! ! ");
+            // foreach (Block block in sameGameSimpleSolution.Turns)
+            // {
+            //     Console.WriteLine(block);
+            //     Console.WriteLine();
+            //     initialGameState.deleteBlock(block);
+            //     Console.WriteLine(initialGameState.ToString());
+            // }
+            //
+            // Console.WriteLine();
+            // Console.WriteLine("FINAL SCORE:" + sameGameSimpleSolution.Score);
+            //
+            // #endregion
 
             // Block turn1 = legals.First(x => x.color == 1);
             // GameState newGameState = initialGameState.deleteBlock(turn1);
