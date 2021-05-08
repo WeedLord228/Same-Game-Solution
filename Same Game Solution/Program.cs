@@ -1,44 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using Microsoft.Msagl.Core.Layout;
-using Microsoft.Msagl.Drawing;
 using Same_Game_Solution.algo_lib;
 using Same_Game_Solution.engine;
-using Node = Microsoft.Msagl.Drawing.Node;
-using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
+using Same_Game_Solution.engine.visualizers;
 
 namespace Same_Game_Solution
 {
-    class Program
+    internal class Program
     {
-        private static GameStateSimpleVisualizer _gameStateSimpleVisualizer = new GameStateSimpleVisualizer();
-        private static TreeVisualizer _treeVisualizer = new TreeVisualizer();
-        private static IBoardGetterService _sbgt;
-        
-        static void Main(string[] args)
+        private static readonly GameStateSimpleVisualizer GameStateSimpleVisualizer = new();
+
+        // private static TreeVisualizer _treeVisualizer = new TreeVisualizer();
+        private static IBoardGetterService _simpleBoardGetterService;
+
+        private static void Main(string[] args)
         {
-            int[] colors = {1, 2, 3};
+            var board = SameGameRepo.real15x15board;
 
-            int[][] board = SameGameRepo.real15x15board;
-
-                _sbgt = new SimpleBoardGetterService(board);
-            var initialGameState = new GameState(_sbgt.getBoard(), 0);
-            _gameStateSimpleVisualizer.render(initialGameState);
+            _simpleBoardGetterService = new SimpleBoardGetterService(board);
+            var initialGameState = new GameState(_simpleBoardGetterService.getBoard(), 0);
+            GameStateSimpleVisualizer.render(initialGameState);
             Console.WriteLine("LEGALS:");
             var legals = initialGameState.legals();
-            foreach (var block in legals)
-            {
-                Console.WriteLine(block.ToString());
-            }
+            foreach (var block in legals) Console.WriteLine(block.ToString());
 
             var simpleScoreEstimator = new SimpleScoreEstimator();
             var boardwiseScoreEstimator = new BoardwiseScoreEstimator();
-            var beamSearchScroeEstimator = new BeamSearchBoardwiseEstimator();
+            var beamSearchScoreEstimator = new BeamSearchBoardwiseEstimator();
 
-            var beamSearchSolver = new BeamSearchSolver(3, 4, beamSearchScroeEstimator);
+            var beamSearchSolver = new BeamSearchSolver(3, 4, beamSearchScoreEstimator);
             // var beamSearchSolver = new GreedySolver(boardwiseScoreEstimator);
             var greedySolver = new GreedySolver(boardwiseScoreEstimator);
             // var sameGameSimpleSolution = greedySolver.GetSolutions(initialGameState.copy()).First();
@@ -56,8 +46,8 @@ namespace Same_Game_Solution
 
             Console.WriteLine();
             Console.WriteLine("FINAL SCORE:" + initialGameState.Score);
-            
-             // _treeVisualizer.render(beamSearchSolver.SearchTree);
+
+            // _treeVisualizer.render(beamSearchSolver.SearchTree);
 
 
 //------------------------------------------------------------------------------------------------------------------------

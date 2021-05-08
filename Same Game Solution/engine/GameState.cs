@@ -1,69 +1,51 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
 namespace Same_Game_Solution.engine
 {
     public class GameState
     {
-        private int[][] board;
-        private int score;
-
-        public int Score => score;
-
-        private bool terminal;
-
-        public bool Terminal => terminal;
+        private readonly int[][] _board;
 
         public GameState(int[][] board, int score, bool terminal = false)
         {
-            this.board = board;
-            this.score = score;
-            this.terminal = terminal;
+            _board = board;
+            Score = score;
+            Terminal = terminal;
         }
+
+        public int Score { get; private set; }
+
+        public bool Terminal { get; private set; }
 
         public void deleteBlock(Block turn)
         {
-            foreach (var point in turn.points)
-            {
-                board[point.Item1][point.Item2] = -1;
-            }
+            foreach (var (y, x) in turn.Points) _board[y][x] = -1;
 
             normalizeVertically();
             normalizeHorizontally();
 
-            score = score + (turn.size - 2) * (turn.size - 2);
+            Score += (turn.Size - 2) * (turn.Size - 2);
 
-            if (legals().Count != 0)
-            {
-                return;
-            }
+            if (legals().Count != 0) return;
 
-            terminal = true;
-            if (board[0][0] == -1)
-            {
-                score += board.Length * board[0].Length;
-            }
+            Terminal = true;
+            if (_board[0][0] == -1) Score += _board.Length * _board[0].Length;
         }
-        
+
         public GameState copy()
         {
-            var newBoard = new int[board.Length][];
-            
-            for (var y = 0; y < board.Length; y++)
+            var newBoard = new int[_board.Length][];
+
+            for (var y = 0; y < _board.Length; y++)
             {
-                newBoard[y] = new int[board[0].Length];
-                for (var x = 0; x < board[0].Length; x++)
-                {
-                    newBoard[y][x] = board[y][x];
-                }        
+                newBoard[y] = new int[_board[0].Length];
+                for (var x = 0; x < _board[0].Length; x++) newBoard[y][x] = _board[y][x];
             }
-            
-            return new GameState(newBoard, score, terminal);
+
+            return new GameState(newBoard, Score, Terminal);
         }
 
         public HashSet<Block> legals()
@@ -71,22 +53,17 @@ namespace Same_Game_Solution.engine
             var blocks = new HashSet<Block>();
             var visited = new HashSet<Tuple<int, int>>();
 
-            for (var x = 0; x < board.Length; x++)
+            for (var x = 0; x < _board.Length; x++)
+            for (var y = 0; y < _board[0].Length; y++)
             {
-                for (var y = 0; y < board[0].Length; y++)
-                {
-                    if (board[x][y] == -1 || visited.Contains(new Tuple<int, int>(x, y)))
-                        continue;
-                    var block = computeBlock(x, y);
-                    if (block.size < 2)
-                        continue;
-                    blocks.Add(block);
+                if (_board[x][y] == -1 || visited.Contains(new Tuple<int, int>(x, y)))
+                    continue;
+                var block = computeBlock(x, y);
+                if (block.Size < 2)
+                    continue;
+                blocks.Add(block);
 
-                    foreach (var point in block.points)
-                    {
-                        visited.Add(point);
-                    }
-                }
+                foreach (var point in block.Points) visited.Add(point);
             }
 
             return blocks;
@@ -94,65 +71,45 @@ namespace Same_Game_Solution.engine
 
         private void normalizeHorizontally()
         {
-            for (var x = 0; x < board[0].Length; x++)
+            for (var x = 0; x < _board[0].Length; x++)
             {
-                if (board[0][x] != -1)
-                {
-                    continue;
-                }
+                if (_board[0][x] != -1) continue;
 
                 var gapEnd = x + 1;
 
-                while (gapEnd < board[0].Length && board[0][gapEnd] == -1)
-                {
-                    gapEnd++;
-                }
+                while (gapEnd < _board[0].Length && _board[0][gapEnd] == -1) gapEnd++;
 
-                if (gapEnd == board[0].Length)
-                {
-                    return;
-                }
+                if (gapEnd == _board[0].Length) return;
 
-                for (var y = 0; y < board.Length; y++)
+                for (var y = 0; y < _board.Length; y++)
                 {
-                    board[y][x] = board[y][gapEnd];
-                    board[y][gapEnd] = -1;
+                    _board[y][x] = _board[y][gapEnd];
+                    _board[y][gapEnd] = -1;
                 }
             }
         }
-        
+
         private void normalizeVertically()
         {
-            for (var x = 0; x < board[0].Length; x++)
+            for (var x = 0; x < _board[0].Length; x++)
+            for (var y = 0; y < _board.Length; y++)
             {
-                for (var y = 0; y < board.Length; y++)
-                {
-                    if (board[y][x] != -1)
-                    {
-                        continue;
-                    }
+                if (_board[y][x] != -1) continue;
 
-                    var gapEnd = y + 1;
-                    
-                    while (gapEnd < board.Length && board[gapEnd][x] == -1)
-                    {
-                        gapEnd++;
-                    }
+                var gapEnd = y + 1;
 
-                    if (gapEnd == board.Length)
-                    {
-                        break;
-                    }
-                    
-                    board[y][x] = board[gapEnd][x];
-                    board[gapEnd][x] = -1;
-                }
+                while (gapEnd < _board.Length && _board[gapEnd][x] == -1) gapEnd++;
+
+                if (gapEnd == _board.Length) break;
+
+                _board[y][x] = _board[gapEnd][x];
+                _board[gapEnd][x] = -1;
             }
         }
 
         private Block computeBlock(int x, int y)
         {
-            var color = board[x][y];
+            var color = _board[x][y];
             var region = new HashSet<Tuple<int, int>>();
             var visited = new HashSet<Tuple<int, int>>();
             var open = new Queue<Tuple<int, int>>();
@@ -169,22 +126,23 @@ namespace Same_Game_Solution.engine
                 region.Add(xxyy);
 
                 var up = new Tuple<int, int>(xxyy.Item1 - 1, xxyy.Item2);
-                if (xxyy.Item1 > 0 && board[up.Item1][up.Item2] == color && !visited.Contains(up))
+                if (xxyy.Item1 > 0 && _board[up.Item1][up.Item2] == color && !visited.Contains(up))
                     open.Enqueue(up);
                 visited.Add(up);
 
                 var down = new Tuple<int, int>(xxyy.Item1 + 1, xxyy.Item2);
-                if (xxyy.Item1 < board.Length - 1 && board[down.Item1][down.Item2] == color && !visited.Contains(down))
+                if (xxyy.Item1 < _board.Length - 1 && _board[down.Item1][down.Item2] == color &&
+                    !visited.Contains(down))
                     open.Enqueue(down);
                 visited.Add(down);
 
                 var left = new Tuple<int, int>(xxyy.Item1, xxyy.Item2 - 1);
-                if (xxyy.Item2 > 0 && board[left.Item1][left.Item2] == color && !visited.Contains(left))
+                if (xxyy.Item2 > 0 && _board[left.Item1][left.Item2] == color && !visited.Contains(left))
                     open.Enqueue(left);
                 visited.Add(left);
 
                 var right = new Tuple<int, int>(xxyy.Item1, xxyy.Item2 + 1);
-                if (xxyy.Item2 < board[0].Length - 1 && board[right.Item1][right.Item2] == color &&
+                if (xxyy.Item2 < _board[0].Length - 1 && _board[right.Item1][right.Item2] == color &&
                     !visited.Contains(right))
                     open.Enqueue(right);
                 visited.Add(right);
@@ -196,10 +154,7 @@ namespace Same_Game_Solution.engine
         public override string ToString()
         {
             var sb = new StringBuilder();
-            foreach (var row in board.Reverse())
-            {
-                sb.AppendLine(String.Join(" ", row));
-            }
+            foreach (var row in _board.Reverse()) sb.AppendLine(string.Join(" ", row));
 
             return sb.ToString();
         }
@@ -207,25 +162,23 @@ namespace Same_Game_Solution.engine
 
     public class Block
     {
-        public readonly ICollection<Tuple<int, int>> points;
-        public readonly int color;
-        public int size => points.Count;
+        private readonly int _color;
+        public readonly ICollection<Tuple<int, int>> Points;
 
         public Block(ICollection<Tuple<int, int>> points, int color)
         {
-            this.points = points;
-            this.color = color;
+            Points = points;
+            _color = color;
         }
+
+        public int Size => Points.Count;
 
         public override string ToString()
         {
             var sb = new StringBuilder();
-            foreach (var point in points)
-            {
-                sb.Append(point.ToString() + "\t");
-            }
+            foreach (var point in Points) sb.Append(point + "\t");
 
-            sb.Append(color);
+            sb.Append(_color);
 
             return sb.ToString();
         }

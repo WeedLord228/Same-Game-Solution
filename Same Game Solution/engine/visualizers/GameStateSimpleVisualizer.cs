@@ -1,16 +1,12 @@
 ﻿using System;
 
-namespace Same_Game_Solution.engine
+namespace Same_Game_Solution.engine.visualizers
 {
-    class GameStateSimpleVisualizer : IVisualizer<GameState>
+    internal class GameStateSimpleVisualizer : IVisualizer<GameState>
     {
-        public GameStateSimpleVisualizer()
-        {
-        }
-        
         public void render(GameState gameState)
         {
-            Console.WriteLine(gameState.ToString());    
+            Console.WriteLine(gameState.ToString());
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Same_Game_Solution.engine
+﻿namespace Same_Game_Solution.engine.visualizers
 {
     public interface IVisualizer<T>
     {

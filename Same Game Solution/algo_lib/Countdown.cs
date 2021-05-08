@@ -25,17 +25,17 @@ namespace Same_Game_Solution.algo_lib
 
         public static Countdown operator /(Countdown cd, double v)
         {
-            return new Countdown(cd.TimeAvailable.TotalMilliseconds / v);
+            return new(cd.TimeAvailable.TotalMilliseconds / v);
         }
 
         public static Countdown operator *(Countdown cd, double v)
         {
-            return new Countdown(cd.TimeAvailable.TotalMilliseconds * v);
+            return new(cd.TimeAvailable.TotalMilliseconds * v);
         }
 
         public static Countdown operator *(double v, Countdown cd)
         {
-            return new Countdown(cd.TimeAvailable.TotalMilliseconds * v);
+            return new(cd.TimeAvailable.TotalMilliseconds * v);
         }
 
         public bool IsFinished()
@@ -50,12 +50,12 @@ namespace Same_Game_Solution.algo_lib
 
         public static implicit operator Countdown(int milliseconds)
         {
-            return new Countdown(milliseconds);
+            return new(milliseconds);
         }
 
         public static implicit operator Countdown(long milliseconds)
         {
-            return new Countdown(milliseconds);
+            return new(milliseconds);
         }
     }
 }

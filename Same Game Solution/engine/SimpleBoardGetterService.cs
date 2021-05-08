@@ -1,18 +1,17 @@
-﻿using System.Linq;
-
-namespace Same_Game_Solution.engine
+﻿namespace Same_Game_Solution.engine
 {
     public class SimpleBoardGetterService : IBoardGetterService
     {
-        private int[][] board;
+        private readonly int[][] _board;
+
         public SimpleBoardGetterService(int[][] board)
         {
-            this.board = board;
+            _board = board;
         }
 
         public int[][] getBoard()
         {
-            return board;
+            return _board;
         }
     }
 }

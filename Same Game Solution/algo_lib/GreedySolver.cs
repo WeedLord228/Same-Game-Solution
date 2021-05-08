@@ -1,21 +1,13 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Same_Game_Solution.engine;
 
 namespace Same_Game_Solution.algo_lib
 {
-    public class GreedySolver : ISolver<GameState, SameGameSolution >
+    public class GreedySolver : ISolver<GameState, SameGameSolution>
     {
         private IEstimator _estimator;
 
         public GreedySolver(IEstimator estimator)
-        {
-            _estimator = estimator;
-        }
-
-        public void changeEstimator(IEstimator estimator)
         {
             _estimator = estimator;
         }
@@ -41,20 +33,19 @@ namespace Same_Game_Solution.algo_lib
         {
             var initialLegals = curGameState.legals();
             Block bestTurn = null;
-            var bestTurnScore = Double.MinValue;
-            
-            
+            var bestTurnScore = double.MinValue;
+
+
             foreach (var block in initialLegals)
             {
                 var mutableGameState = curGameState.copy();
                 mutableGameState.deleteBlock(block);
                 var curScore = _estimator.Estimate(mutableGameState);
-                if (curScore > bestTurnScore)
-                {
-                    bestTurn = block;
-                    bestTurnScore = curScore;
-                }
+                if (!(curScore > bestTurnScore)) continue;
+                bestTurn = block;
+                bestTurnScore = curScore;
             }
+
             return bestTurn;
         }
     }

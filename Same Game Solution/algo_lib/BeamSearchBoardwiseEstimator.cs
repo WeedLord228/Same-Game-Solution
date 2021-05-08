@@ -7,12 +7,9 @@ namespace Same_Game_Solution.algo_lib
         public double Estimate(GameState gameState)
         {
             double result = 0;
-            foreach (var block in gameState.legals())
-            {
-                result += (block.size - 2) * (block.size - 2) * 100000;
-            }
+            foreach (var block in gameState.legals()) result += (block.Size - 2) * (block.Size - 2) * 1000;
 
-            result += gameState.Score; 
+            result += gameState.Score;
             return result;
         }
     }

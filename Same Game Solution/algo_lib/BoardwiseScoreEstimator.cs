@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Same_Game_Solution.engine;
+﻿using Same_Game_Solution.engine;
 
 namespace Same_Game_Solution.algo_lib
 {
@@ -9,11 +7,8 @@ namespace Same_Game_Solution.algo_lib
         public double Estimate(GameState gameState)
         {
             double result = 0;
-            foreach (var block in gameState.legals())
-            {
-                result += (block.size - 2) * (block.size - 2);
-            }
-            
+            foreach (var block in gameState.legals()) result += (block.Size - 2) * (block.Size - 2);
+
             return result;
         }
     }

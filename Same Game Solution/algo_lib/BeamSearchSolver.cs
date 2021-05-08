@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Same_Game_Solution.engine;
@@ -8,31 +6,29 @@ namespace Same_Game_Solution.algo_lib
 {
     public class BeamSearchSolver : ISolver<GameState, SameGameSolution>
     {
-        private int beamWidth;
-        private int depth;
-        private IEstimator _estimator;
-        private static int count;
-        public Tree<Block> SearchTree { get; set; }
+        private readonly int _beamWidth;
+        private readonly int _depth;
+        private readonly IEstimator _estimator;
 
-        public BeamSearchSolver(int beamWidth, int depth, IEstimator _estimator)
+        public BeamSearchSolver(int beamWidth, int depth, IEstimator estimator)
         {
-            this.beamWidth = beamWidth;
-            this.depth = depth;
-            this._estimator = _estimator;
+            _beamWidth = beamWidth;
+            _depth = depth;
+            _estimator = estimator;
         }
+
+        public Tree<Block> SearchTree { get; set; }
 
 
         public IEnumerable<SameGameSolution> GetSolutions(GameState problem)
         {
             var currentProblem = problem.copy();
-            var legals = currentProblem.legals();
-            var result = new List<Block>();
             var root = new TreeNode<Block>(
                 0, null, null, null, currentProblem);
             SearchTree = new Tree<Block>(root);
             while (!currentProblem.Terminal)
             {
-                ApplyRecurssion(root, 0);
+                ApplyRecursion(root, 0);
                 root = SearchTree.BestLeaf;
                 currentProblem = root.GameState;
             }
@@ -41,38 +37,31 @@ namespace Same_Game_Solution.algo_lib
             yield return new SameGameSolution(bestPath.ToArray(), SearchTree.BestLeaf.GameState.Score);
         }
 
-        private void ApplyRecurssion(TreeNode<Block> node, int depth)
+        private void ApplyRecursion(TreeNode<Block> node, int recDepth)
         {
             var nextTurns = getNextTurns(node.GameState);
 
             if (nextTurns.Count == 0)
             {
                 node.Score = _estimator.Estimate(node.GameState);
-                count++;
-                return;
-            }
-            
-            if (depth == this.depth)
-            {
                 return;
             }
 
-            if (node.Childs == null)
+            if (recDepth == _depth) return;
+
+            if (node.Children == null)
             {
-                node.Childs = new List<TreeNode<Block>>();
-                foreach (var turn in nextTurns)
+                node.Children = new List<TreeNode<Block>>();
+                foreach (var (block, score) in nextTurns)
                 {
                     var currentGameState = node.GameState.copy();
-                    currentGameState.deleteBlock(turn.Item1);
-                    node.Childs.Add(new TreeNode<Block>(turn.Item2, null, node, turn.Item1,
+                    currentGameState.deleteBlock(block);
+                    node.Children.Add(new TreeNode<Block>(score, null, node, block,
                         currentGameState));
                 }
             }
 
-            foreach (var child in node.Childs)
-            {
-                ApplyRecurssion(child, depth + 1);
-            }
+            foreach (var child in node.Children) ApplyRecursion(child, recDepth + 1);
         }
 
         private List<(Block, double)> getNextTurns(GameState curGameState)
@@ -89,7 +78,7 @@ namespace Same_Game_Solution.algo_lib
             }
 
             bestTurns.Sort((x, y) => y.Item2.CompareTo(x.Item2));
-            return bestTurns.Take(beamWidth).ToList();
+            return bestTurns.Take(_beamWidth).ToList();
         }
     }
 }
