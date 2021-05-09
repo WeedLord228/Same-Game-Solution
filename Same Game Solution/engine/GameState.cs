@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Same_Game_Solution.engine.visualizers;
 using Same_Game_Solution.structures;
 
 namespace Same_Game_Solution.engine
@@ -157,7 +158,7 @@ namespace Same_Game_Solution.engine
             var sb = new StringBuilder();
             foreach (var row in _board.Reverse()) sb.AppendLine(string.Join(" ", row));
 
-            return sb.ToString();
+            return NumbersToGraphicConverter.Convert(sb.ToString());
         }
     }
 
@@ -179,7 +180,7 @@ namespace Same_Game_Solution.engine
             var sb = new StringBuilder();
             foreach (var point in Points) sb.Append(point + "\t");
 
-            sb.Append(_color);
+            sb.Append(NumbersToGraphicConverter.Convert(_color.ToString()));
 
             return sb.ToString();
         }
