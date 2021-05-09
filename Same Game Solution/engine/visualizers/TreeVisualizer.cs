@@ -84,10 +84,8 @@ namespace Same_Game_Solution.engine.visualizers
                 
                 foreach (var child in toObserve)
                 {
-                    graph.AddEdge( Emoji.Black_Large_Square + Emoji.Hearts + Emoji.Diamonds, Emoji.Black_Large_Square + Emoji.Spades + Emoji.Clubs);
+                    graph.AddEdge( child.ToString(), currentNode.ToString());
                     queue.Enqueue(child);
-                    // graph.AddEdge( child.ToString(), currentNode.ToString());
-                    // queue.Enqueue(child);
 
                 }
             }
