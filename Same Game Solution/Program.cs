@@ -28,7 +28,7 @@ namespace Same_Game_Solution
             var boardwiseScoreEstimator = new BoardwiseScoreEstimator();
             var beamSearchScoreEstimator = new BeamSearchBoardwiseEstimator();
 
-            var beamSearchSolver = new BeamSearchSolver(3, 4, beamSearchScoreEstimator);
+            var beamSearchSolver = new BeamSearchSolver(5, 3, new SimpleBeamSearchScoreEstimator());
             // var beamSearchSolver = new GreedySolver(boardwiseScoreEstimator);
             var greedySolver = new GreedySolver(boardwiseScoreEstimator);
             // var sameGameSimpleSolution = greedySolver.GetSolutions(initialGameState.copy()).First();

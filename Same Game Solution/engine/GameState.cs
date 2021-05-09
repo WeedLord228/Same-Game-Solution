@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Same_Game_Solution.structures;
 
 namespace Same_Game_Solution.engine
 {
@@ -48,11 +49,10 @@ namespace Same_Game_Solution.engine
             return new GameState(newBoard, Score, Terminal);
         }
 
-        public HashSet<Block> legals()
+        public ICollection<Block> legals()
         {
-            var blocks = new HashSet<Block>();
-            var visited = new HashSet<Tuple<int, int>>();
-
+            var blocks = new CoolerLinkedList<Block>();
+            var visited = new CoolerLinkedList<Tuple<int, int>>();
             for (var x = 0; x < _board.Length; x++)
             for (var y = 0; y < _board[0].Length; y++)
             {
@@ -110,8 +110,8 @@ namespace Same_Game_Solution.engine
         private Block computeBlock(int x, int y)
         {
             var color = _board[x][y];
-            var region = new HashSet<Tuple<int, int>>();
-            var visited = new HashSet<Tuple<int, int>>();
+            var region = new CoolerLinkedList<Tuple<int, int>>();
+            var visited = new CoolerLinkedList<Tuple<int, int>>();
             var open = new Queue<Tuple<int, int>>();
 
             open.Enqueue(new Tuple<int, int>(x, y));
