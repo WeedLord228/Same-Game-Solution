@@ -8,13 +8,22 @@ namespace Same_Game_Solution.algo_lib
     {
         private readonly int _beamWidth;
         private readonly int _depth;
-        private readonly IEstimator _estimator;
+        private IEstimator _currentEstimator;
+        private readonly IEnumerable<IEstimator> _estimators;
 
-        public BeamSearchSolver(int beamWidth, int depth, IEstimator estimator)
+        public BeamSearchSolver(int beamWidth, int depth, IEstimator currentEstimator)
         {
             _beamWidth = beamWidth;
             _depth = depth;
-            _estimator = estimator;
+            _currentEstimator = currentEstimator;
+        }
+
+        public BeamSearchSolver(int beamWidth, int depth, IEnumerable<IEstimator> estimators)
+        {
+            _beamWidth = beamWidth;
+            _depth = depth;
+            _estimators = estimators;
+            _currentEstimator = estimators.First();
         }
 
         public Tree<Block> SearchTree { get; set; }
@@ -39,11 +48,19 @@ namespace Same_Game_Solution.algo_lib
 
         private void ApplyRecursion(TreeNode<Block> node, int recDepth)
         {
+            if (recDepth == _depth - 1)
+            {
+                _currentEstimator = _estimators.Last();
+            }
+            else
+            {
+                _currentEstimator = _estimators.First();
+            }
             var nextTurns = getNextTurns(node.GameState);
 
             if (nextTurns.Count == 0)
             {
-                node.Score = _estimator.Estimate(node.GameState);
+                node.Score = _currentEstimator.Estimate(node.GameState);
                 return;
             }
 
@@ -73,7 +90,7 @@ namespace Same_Game_Solution.algo_lib
             {
                 var mutableGameState = curGameState.copy();
                 mutableGameState.deleteBlock(block);
-                var curScore = _estimator.Estimate(mutableGameState);
+                var curScore = _currentEstimator.Estimate(mutableGameState);
                 bestTurns.Add((block, curScore));
             }
 

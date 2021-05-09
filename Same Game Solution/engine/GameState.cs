@@ -33,7 +33,8 @@ namespace Same_Game_Solution.engine
             if (legals().Count != 0) return;
 
             Terminal = true;
-            if (_board[0][0] == -1) Score += _board.Length * _board[0].Length;
+            // if (_board[0][0] == -1) Score += _board.Length * _board[0].Length;
+            if (_board[0][0] == -1) Score += 1000;
         }
 
         public GameState copy()
