@@ -22,23 +22,23 @@ namespace Same_Game_Solution.engine
 
         public bool Terminal { get; private set; }
 
-        public void deleteBlock(Block turn)
+        public void DeleteBlock(Block turn)
         {
             foreach (var (y, x) in turn.Points) _board[y][x] = -1;
 
-            normalizeVertically();
-            normalizeHorizontally();
+            NormalizeVertically();
+            NormalizeHorizontally();
 
             Score += (turn.Size - 2) * (turn.Size - 2);
 
-            if (legals().Count != 0) return;
+            if (Legals().Count != 0) return;
 
             Terminal = true;
             // if (_board[0][0] == -1) Score += _board.Length * _board[0].Length;
             if (_board[0][0] == -1) Score += 1000;
         }
 
-        public GameState copy()
+        public GameState Copy()
         {
             var newBoard = new int[_board.Length][];
 
@@ -51,16 +51,16 @@ namespace Same_Game_Solution.engine
             return new GameState(newBoard, Score, Terminal);
         }
 
-        public ICollection<Block> legals()
+        public ICollection<Block> Legals()
         {
-            var blocks = new CoolerLinkedList<Block>();
-            var visited = new CoolerLinkedList<Tuple<int, int>>();
+            var blocks = new HashSet<Block>();
+            var visited = new HashSet<Tuple<int, int>>();
             for (var x = 0; x < _board.Length; x++)
             for (var y = 0; y < _board[0].Length; y++)
             {
                 if (_board[x][y] == -1 || visited.Contains(new Tuple<int, int>(x, y)))
                     continue;
-                var block = computeBlock(x, y);
+                var block = ComputeBlock(x, y);
                 if (block.Size < 2)
                     continue;
                 blocks.Add(block);
@@ -71,7 +71,7 @@ namespace Same_Game_Solution.engine
             return blocks;
         }
 
-        private void normalizeHorizontally()
+        private void NormalizeHorizontally()
         {
             for (var x = 0; x < _board[0].Length; x++)
             {
@@ -91,7 +91,7 @@ namespace Same_Game_Solution.engine
             }
         }
 
-        private void normalizeVertically()
+        private void NormalizeVertically()
         {
             for (var x = 0; x < _board[0].Length; x++)
             for (var y = 0; y < _board.Length; y++)
@@ -109,11 +109,11 @@ namespace Same_Game_Solution.engine
             }
         }
 
-        private Block computeBlock(int x, int y)
+        private Block ComputeBlock(int x, int y)
         {
             var color = _board[x][y];
-            var region = new CoolerLinkedList<Tuple<int, int>>();
-            var visited = new CoolerLinkedList<Tuple<int, int>>();
+            var region = new HashSet<Tuple<int, int>>();
+            var visited = new HashSet<Tuple<int, int>>();
             var open = new Queue<Tuple<int, int>>();
 
             open.Enqueue(new Tuple<int, int>(x, y));

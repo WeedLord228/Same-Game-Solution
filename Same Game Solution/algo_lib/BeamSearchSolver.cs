@@ -31,7 +31,7 @@ namespace Same_Game_Solution.algo_lib
 
         public IEnumerable<SameGameSolution> GetSolutions(GameState problem)
         {
-            var currentProblem = problem.copy();
+            var currentProblem = problem.Copy();
             var root = new TreeNode<Block>(
                 0, null, null, null, currentProblem);
             SearchTree = new Tree<Block>(root);
@@ -71,8 +71,8 @@ namespace Same_Game_Solution.algo_lib
                 node.Children = new List<TreeNode<Block>>();
                 foreach (var (block, score) in nextTurns)
                 {
-                    var currentGameState = node.GameState.copy();
-                    currentGameState.deleteBlock(block);
+                    var currentGameState = node.GameState.Copy();
+                    currentGameState.DeleteBlock(block);
                     node.Children.Add(new TreeNode<Block>(score, null, node, block,
                         currentGameState));
                 }
@@ -83,13 +83,13 @@ namespace Same_Game_Solution.algo_lib
 
         private List<(Block, double)> getNextTurns(GameState curGameState)
         {
-            var initialLegals = curGameState.legals();
+            var initialLegals = curGameState.Legals();
             var bestTurns = new List<(Block, double)>();
 
             foreach (var block in initialLegals)
             {
-                var mutableGameState = curGameState.copy();
-                mutableGameState.deleteBlock(block);
+                var mutableGameState = curGameState.Copy();
+                mutableGameState.DeleteBlock(block);
                 var curScore = _currentEstimator.Estimate(mutableGameState);
                 bestTurns.Add((block, curScore));
             }

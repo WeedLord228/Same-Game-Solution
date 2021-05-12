@@ -21,12 +21,13 @@ namespace Same_Game_Solution
             var initialGameState = new GameState(_simpleBoardGetterService.getBoard(), 0);
             GameStateSimpleVisualizer.render(initialGameState);
             Console.WriteLine("LEGALS:");
-            var legals = initialGameState.legals();
+            var legals = initialGameState.Legals();
             foreach (var block in legals) Console.WriteLine(block.ToString());
 
-            var beamSearchSolver = new BeamSearchSolver(1, 1, new IEstimator[] {new BoardwiseScoreEstimator(), new SimpleScoreEstimator()});
+            var beamSearchSolver = new BeamSearchSolver(3, 3, new IEstimator[] {new BoardwiseScoreEstimator(), new SimpleScoreEstimator()});
+            // var beamSearchSolver = new BeamSearchSolver(2, 3, new IEstimator[] {new BeamSearchBoardwiseEstimator()});
             // var beamSearchSolver = new GreedySolver(boardwiseScoreEstimator);
-            var sameGameBeamSearchSolution = beamSearchSolver.GetSolutions(initialGameState.copy()).First();
+            var sameGameBeamSearchSolution = beamSearchSolver.GetSolutions(initialGameState.Copy()).First();
 
             Console.WriteLine();
             Console.WriteLine("SIMPLE SCORE GAME ! ! ! ! ! ");
@@ -34,7 +35,7 @@ namespace Same_Game_Solution
             {
                 Console.WriteLine(block);
                 Console.WriteLine();
-                initialGameState.deleteBlock(block);
+                initialGameState.DeleteBlock(block);
                 Console.WriteLine(initialGameState.ToString());
             }
 

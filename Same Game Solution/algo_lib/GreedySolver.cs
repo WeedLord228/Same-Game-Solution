@@ -15,31 +15,31 @@ namespace Same_Game_Solution.algo_lib
         // public IEnumerable<SameGameSolution> GetSolutions(GameState problem, Countdown countdown)
         public IEnumerable<SameGameSolution> GetSolutions(GameState problem)
         {
-            var coolerProblem = problem.copy();
-            var legals = coolerProblem.legals();
+            var coolerProblem = problem.Copy();
+            var legals = coolerProblem.Legals();
             var result = new List<Block>();
             while (legals.Count != 0)
             {
-                var curBlock = getNextTurn(coolerProblem);
+                var curBlock = GetNextTurn(coolerProblem);
                 result.Add(curBlock);
-                coolerProblem.deleteBlock(curBlock);
-                legals = coolerProblem.legals();
+                coolerProblem.DeleteBlock(curBlock);
+                legals = coolerProblem.Legals();
             }
 
             yield return new SameGameSolution(result.ToArray(), coolerProblem.Score);
         }
 
-        private Block getNextTurn(GameState curGameState)
+        private Block GetNextTurn(GameState curGameState)
         {
-            var initialLegals = curGameState.legals();
+            var initialLegals = curGameState.Legals();
             Block bestTurn = null;
             var bestTurnScore = double.MinValue;
 
 
             foreach (var block in initialLegals)
             {
-                var mutableGameState = curGameState.copy();
-                mutableGameState.deleteBlock(block);
+                var mutableGameState = curGameState.Copy();
+                mutableGameState.DeleteBlock(block);
                 var curScore = _estimator.Estimate(mutableGameState);
                 if (!(curScore > bestTurnScore)) continue;
                 bestTurn = block;
