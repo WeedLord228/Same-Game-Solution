@@ -34,12 +34,15 @@ namespace Same_Game_Solution.algo_lib
             var currentProblem = problem.copy();
             var root = new TreeNode<Block>(
                 0, null, null, null, currentProblem);
-            SearchTree = new Tree<Block>(root);
+            var potentialResults = new List<TreeNode<Block>>();
+            SearchTree = new Tree<Block>(root) {LocalRoot = root};
             while (!currentProblem.Terminal)
             {
-                ApplyRecursion(root, 0);
-                root = SearchTree.BestLeaf;
-                currentProblem = root.GameState;
+                ApplyRecursion(SearchTree.LocalRoot, 0);
+                SearchTree.LocalRoot = SearchTree.GetNextRoot(SearchTree.BestLeaf, SearchTree.LocalRoot);
+                potentialResults.AddRange(SearchTree.Shrink());
+                currentProblem = SearchTree.LocalRoot.GameState;
+                
             }
 
             var bestPath = SearchTree.GetBestPath();
@@ -56,6 +59,7 @@ namespace Same_Game_Solution.algo_lib
             {
                 _currentEstimator = _estimators.First();
             }
+
             var nextTurns = getNextTurns(node.GameState);
 
             if (nextTurns.Count == 0)

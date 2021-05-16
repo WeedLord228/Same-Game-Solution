@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Msagl.Drawing;
 using Same_Game_Solution.engine;
 
 namespace Same_Game_Solution.algo_lib
@@ -16,6 +17,8 @@ namespace Same_Game_Solution.algo_lib
             GameState = gameState;
         }
 
+        public bool Opened = true;
+        
         public double Score { get; set; }
 
         public List<TreeNode<T>> Children { get; set; }
@@ -50,8 +53,25 @@ namespace Same_Game_Solution.algo_lib
         }
 
         public TreeNode<T> Root { get; }
-
         public TreeNode<T> BestLeaf => GetBestLeaf();
+        
+        public TreeNode<T> LocalRoot { get; set; }
+
+        public TreeNode<T> GetNextRoot(TreeNode<T> leaf, TreeNode<T> currentRoot)
+        {
+            if (leaf.GameState.Terminal)
+            {
+                return leaf;
+            }
+
+            while (!leaf.Batya.Equals(currentRoot))
+            {
+                if (leaf.Batya != null)
+                    leaf = leaf.Batya;
+            }
+
+            return leaf;
+        }
 
         private TreeNode<T> GetBestLeaf()
         {
@@ -72,6 +92,34 @@ namespace Same_Game_Solution.algo_lib
             return allLeaves.First(x => x.Score == maxScore);
         }
 
+        public IEnumerable<TreeNode<T>> Shrink()
+        {
+            var potentialLeaves = new List<TreeNode<T>>();
+            var queue = new Queue<TreeNode<T>>();
+            var currentRoot = GetNextRoot(GetBestLeaf(), LocalRoot);
+            foreach (var child in LocalRoot.Children)
+            {
+                if (child.Equals(currentRoot))
+                    continue;
+                queue.Enqueue(child);
+            }
+
+            while (queue.Count != 0)
+            {
+                var currentNode = queue.Dequeue();
+                foreach (var node in currentNode.Children)
+                {
+                    if (node.Children != null)
+                    {
+                        node.Opened = false;
+                        potentialLeaves.Add(node);
+                    }
+                    queue.Enqueue(node);
+                }
+            }
+
+            return potentialLeaves;
+        }
 
         public IEnumerable<T> GetBestPath()
         {
