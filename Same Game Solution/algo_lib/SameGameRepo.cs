@@ -11,6 +11,24 @@
             new[] {7, 7, 1, 9}
         };
 
+
+        public static int[][] trickyBoard =
+        {
+            new int[] {1, 1, 1, 1},
+            new int[] {1, 1, 1, 1}, 
+            new int[] {1, 1, 1, 1},
+            new int[] {1, 1, 1, 1},
+            new int[] {1, 1, 1, 1},
+            new int[] {1, 1, 1, 1}, 
+            new int[] {1, 1, 1, 1},
+            new int[] {1, 1, 1, 1},
+            new int[] {1, 1, 1, 1},
+            new int[] {1, 1, 1, 1},
+            new int[] {2, 2, 2, 2},
+            new int[] {1, 1, 1, 1},
+            new int[] {1, 1, 1, 1},
+        };
+
         public static int[][] real15x15board =
         {
             new[] {1, 1, 1, 1, 1, 2, 2, 3, 1, 1, 2, 1, 2, 3, 2, 2},

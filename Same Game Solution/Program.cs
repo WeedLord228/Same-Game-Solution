@@ -10,7 +10,7 @@ namespace Same_Game_Solution
     {
         private static readonly GameStateSimpleVisualizer GameStateSimpleVisualizer = new();
 
-        private static TreeVisualizer _treeVisualizer = new TreeVisualizer();
+        // private static TreeVisualizer _treeVisualizer = new TreeVisualizer();
         private static IBoardGetterService _simpleBoardGetterService;
 
         private static void Main(string[] args)
@@ -47,24 +47,28 @@ namespace Same_Game_Solution
             Console.WriteLine();
             Console.WriteLine("FINAL SCORE:" + initialGameState.Score);
 
-            _treeVisualizer.render(beamSearchSolver.SearchTree, false);
+            // _treeVisualizer.render(beamSearchSolver.SearchTree, false);
         }
 
         private static void testLogic(string[] args)
         {
-            var board = SameGameRepo.real15x15board;
-            
-            _simpleBoardGetterService = new SimpleBoardGetterService(board);
+            for (int i = 1; i < 1000; i++)
+            {
+                var board = SameGameRepo.real15x15board;
 
-            var beamSearchSolver = new BeamSearchSolver(new BeamSearchBoardwiseEstimator(), 3);
-            var greedySolver = new GreedySolver(new BeamSearchBoardwiseEstimator());
-            
-            var initialGameState = new GameState(_simpleBoardGetterService.getBoard(), 0);
-            var turns = beamSearchSolver.GetBestTurns(new[] {initialGameState});
-            var beamSearchSolutin = beamSearchSolver.GetSolutions(initialGameState, new Countdown(20000));
-            // var greedySolution = greedySolver.GetSolutions(initialGameState);
-            _treeVisualizer.render(beamSearchSolver.SearchTree, true);
-            // Console.WriteLine(greedySolution.First().Score);
+                _simpleBoardGetterService = new SimpleBoardGetterService(board);
+
+                var beamSearchSolver = new BeamSearchSolver(new BeamSearchBoardwiseEstimator(), i);
+                // var greedySolver = new GreedySolver(new BeamSearchBoardwiseEstimator());
+
+                var initialGameState = new GameState(_simpleBoardGetterService.getBoard(), 0);
+                // var turns = beamSearchSolver.GetBestTurns(new[] {initialGameState});
+                var beamSearchSolution = beamSearchSolver.GetSolutions(initialGameState, new Countdown(20000));
+
+                // var greedySolution = greedySolver.GetSolutions(initialGameState);
+                // _treeVisualizer.render(beamSearchSolver.SearchTree, true);
+                Console.WriteLine("{0}: {1}", i, beamSearchSolution.First().Score);
+            }
         }
     }
 }
