@@ -82,7 +82,7 @@ namespace Same_Game_Solution.algo_lib
             {
                 var currentNode = queue.Dequeue();
                 foreach (var child in currentNode.Children)
-                    if (child.Children == null)
+                    if (child.Children == null && child.Opened)
                         allLeaves.Add(child);
                     else
                         queue.Enqueue(child);
