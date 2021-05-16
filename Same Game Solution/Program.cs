@@ -15,6 +15,11 @@ namespace Same_Game_Solution
 
         private static void Main(string[] args)
         {
+            testLogic(args);
+        }
+
+        private static void mainLogic(string[] args)
+        {
             var board = SameGameRepo.fiveOnFourboard;
 
             _simpleBoardGetterService = new SimpleBoardGetterService(board);
@@ -24,7 +29,7 @@ namespace Same_Game_Solution
             var legals = initialGameState.legals();
             foreach (var block in legals) Console.WriteLine(block.ToString());
 
-            var beamSearchSolver = new BeamSearchSolver(2, 2, new IEstimator[] {new BeamSearchBoardwiseEstimator()});
+            var beamSearchSolver = new TreeSearchSolver(1, 1, new IEstimator[] {new BeamSearchBoardwiseEstimator()});
             // var beamSearchSolver = new GreedySolver(boardwiseScoreEstimator);
             var sameGameBeamSearchSolution = beamSearchSolver.GetSolutions(initialGameState.copy()).First();
 
@@ -43,6 +48,23 @@ namespace Same_Game_Solution
             Console.WriteLine("FINAL SCORE:" + initialGameState.Score);
 
             _treeVisualizer.render(beamSearchSolver.SearchTree, false);
+        }
+
+        private static void testLogic(string[] args)
+        {
+            var board = SameGameRepo.real15x15board;
+            
+            _simpleBoardGetterService = new SimpleBoardGetterService(board);
+
+            var beamSearchSolver = new BeamSearchSolver(new BeamSearchBoardwiseEstimator(), 3);
+            var greedySolver = new GreedySolver(new BeamSearchBoardwiseEstimator());
+            
+            var initialGameState = new GameState(_simpleBoardGetterService.getBoard(), 0);
+            var turns = beamSearchSolver.GetBestTurns(new[] {initialGameState});
+            var beamSearchSolutin = beamSearchSolver.GetSolutions(initialGameState, new Countdown(20000));
+            // var greedySolution = greedySolver.GetSolutions(initialGameState);
+            _treeVisualizer.render(beamSearchSolver.SearchTree, true);
+            // Console.WriteLine(greedySolution.First().Score);
         }
     }
 }

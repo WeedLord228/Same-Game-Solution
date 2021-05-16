@@ -1,107 +1,73 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Same_Game_Solution.engine;
-using Same_Game_Solution.engine.visualizers;
 
 namespace Same_Game_Solution.algo_lib
 {
     public class BeamSearchSolver : ISolver<GameState, SameGameSolution>
     {
-        private readonly int _beamWidth;
-        private readonly int _depth;
-        private IEstimator _currentEstimator;
-        private readonly IEnumerable<IEstimator> _estimators;
+        
+        private IEstimator _estimator;
+        private int _beamWidth;
+        public BeamSearchTree<Block> SearchTree { get; set; }
 
-        public BeamSearchSolver(int beamWidth, int depth, IEstimator currentEstimator)
+        public BeamSearchSolver(IEstimator estimator, int beamWidth)
         {
+            _estimator = estimator;
             _beamWidth = beamWidth;
-            _depth = depth;
-            _currentEstimator = currentEstimator;
         }
-
-        public BeamSearchSolver(int beamWidth, int depth, IEnumerable<IEstimator> estimators)
+        
+        public IEnumerable<SameGameSolution> GetSolutions(GameState problem, Countdown countdown)
         {
-            _beamWidth = beamWidth;
-            _depth = depth;
-            _estimators = estimators;
-            _currentEstimator = estimators.First();
-        }
+            var beams = new List<TreeNode<Block>>();
+            SearchTree = new BeamSearchTree<Block>(new TreeNode<Block>(0, null, null, null, problem.copy()));
+            beams.Add(SearchTree.Root);
 
-        public Tree<Block> SearchTree { get; set; }
-
-
-        public IEnumerable<SameGameSolution> GetSolutions(GameState problem)
-        {
-            var currentProblem = problem.copy();
-            var root = new TreeNode<Block>(
-                0, null, null, null, currentProblem);
-            var potentialResults = new List<TreeNode<Block>>();
-            SearchTree = new Tree<Block>(root) {LocalRoot = root};
-            while (!currentProblem.Terminal)
+            while (!countdown.IsFinished() && beams.Any(x => x.GameState.legals().Count > 0) )
             {
-                // StaticTreeVisualizer.render(SearchTree);
-                ApplyRecursion(SearchTree.LocalRoot, 0);
-                potentialResults.AddRange(SearchTree.Shrink());
-                SearchTree.LocalRoot = SearchTree.GetNextRoot(SearchTree.BestLeaf, SearchTree.LocalRoot);
-                currentProblem = SearchTree.LocalRoot.GameState;
+                var bestTurns = GetBestTurns(beams.Select(beam => beam.GameState).ToList());
+                var tempBeams = new List<TreeNode<Block>>();
                 
-            }
-
-            var bestPath = SearchTree.GetBestPath();
-            yield return new SameGameSolution(bestPath.ToArray(), SearchTree.BestLeaf.GameState.Score);
-        }
-
-        private void ApplyRecursion(TreeNode<Block> node, int recDepth)
-        {
-            if (recDepth == _depth - 1)
-            {
-                _currentEstimator = _estimators.Last();
-            }
-            else
-            {
-                _currentEstimator = _estimators.First();
-            }
-
-            var nextTurns = getNextTurns(node.GameState);
-
-            if (nextTurns.Count == 0)
-            {
-                node.Score = _currentEstimator.Estimate(node.GameState);
-                return;
-            }
-
-            if (recDepth == _depth) return;
-
-            if (node.Children == null)
-            {
-                node.Children = new List<TreeNode<Block>>();
-                foreach (var (block, score) in nextTurns)
+                foreach (var (block, score, gameState, prevGameState) in bestTurns)
                 {
-                    var currentGameState = node.GameState.copy();
-                    currentGameState.deleteBlock(block);
-                    node.Children.Add(new TreeNode<Block>(score, null, node, block,
-                        currentGameState));
+                    var copyOfProblem = gameState.copy();
+                    var batya = SearchTree.GetNodeByGameState(prevGameState);
+                    var node = new TreeNode<Block>(score, null, batya, block, copyOfProblem);
+                    if (batya.Children != null)
+                    {
+                        batya.Children.Add(node);
+                    }
+                    else
+                    {
+                        batya.Children = new List<TreeNode<Block>> {node};
+                    }
+                    tempBeams.Add(node);
+                }
+                beams = tempBeams;
+            }
+
+            var bestBeam = beams.Aggregate((x, y) => x.GameState.Score > y.GameState.Score ? x : y);
+            return new[] {new SameGameSolution(SearchTree.GetBlockPath(bestBeam).ToArray(),bestBeam.GameState.Score)};
+        }
+        
+
+        public IEnumerable<(Block,double, GameState, GameState)> GetBestTurns(IEnumerable<GameState> gameStates)
+        {
+            var result = new List<(Block, double, GameState, GameState)>();
+
+            foreach (var gameState in gameStates)
+            {
+                foreach (var legal in gameState.legals())
+                {
+                    var gameStateCopy = gameState.copy();
+                    gameStateCopy.deleteBlock(legal);
+                    result.Add((legal, _estimator.Estimate(gameStateCopy), gameStateCopy, gameState));
                 }
             }
-
-            foreach (var child in node.Children) ApplyRecursion(child, recDepth + 1);
-        }
-
-        private List<(Block, double)> getNextTurns(GameState curGameState)
-        {
-            var initialLegals = curGameState.legals();
-            var bestTurns = new List<(Block, double)>();
-
-            foreach (var block in initialLegals)
-            {
-                var mutableGameState = curGameState.copy();
-                mutableGameState.deleteBlock(block);
-                var curScore = _currentEstimator.Estimate(mutableGameState);
-                bestTurns.Add((block, curScore));
-            }
-
-            bestTurns.Sort((x, y) => y.Item2.CompareTo(x.Item2));
-            return bestTurns.Take(_beamWidth).ToList();
+            
+            result.Sort((x, y) => y.Item2.CompareTo(x.Item2));
+            result = result.Take(_beamWidth).ToList();
+            return result;
         }
     }
 }

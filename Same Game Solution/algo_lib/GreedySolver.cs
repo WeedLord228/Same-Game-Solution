@@ -13,7 +13,7 @@ namespace Same_Game_Solution.algo_lib
         }
 
         // public IEnumerable<SameGameSolution> GetSolutions(GameState problem, Countdown countdown)
-        public IEnumerable<SameGameSolution> GetSolutions(GameState problem)
+        public IEnumerable<SameGameSolution> GetSolutions(GameState problem, Countdown countdown = null)
         {
             var coolerProblem = problem.copy();
             var legals = coolerProblem.legals();
