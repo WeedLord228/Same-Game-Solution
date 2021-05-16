@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Same_Game_Solution.engine;
+using Same_Game_Solution.engine.visualizers;
 
 namespace Same_Game_Solution.algo_lib
 {
@@ -38,9 +39,10 @@ namespace Same_Game_Solution.algo_lib
             SearchTree = new Tree<Block>(root) {LocalRoot = root};
             while (!currentProblem.Terminal)
             {
+                // StaticTreeVisualizer.render(SearchTree);
                 ApplyRecursion(SearchTree.LocalRoot, 0);
-                SearchTree.LocalRoot = SearchTree.GetNextRoot(SearchTree.BestLeaf, SearchTree.LocalRoot);
                 potentialResults.AddRange(SearchTree.Shrink());
+                SearchTree.LocalRoot = SearchTree.GetNextRoot(SearchTree.BestLeaf, SearchTree.LocalRoot);
                 currentProblem = SearchTree.LocalRoot.GameState;
                 
             }

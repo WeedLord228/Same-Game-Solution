@@ -5,14 +5,14 @@ using Same_Game_Solution.algo_lib;
 
 namespace Same_Game_Solution.engine.visualizers
 {
-    public class TreeVisualizer : IVisualizer<Tree<Block>>
+    public static class StaticTreeVisualizer
     {
-        public void render(Tree<Block> toRender)
+        public static void render(Tree<Block> toRender)
         {
             render(toRender,false);
         }
         
-        public void render(Tree<Block> toRender, bool bestOnly)
+        public static void render(Tree<Block> toRender, bool bestOnly)
         {
             //create a form 
             System.Windows.Forms.Form form = new System.Windows.Forms.Form();
@@ -31,7 +31,7 @@ namespace Same_Game_Solution.engine.visualizers
             form.ShowDialog();
         }
 
-        private Graph GetGraph(Tree<Block> tree)
+        private static Graph GetGraph(Tree<Block> tree)
         {
             var graph = new Graph("graph");
             var queue = new Queue<TreeNode<Block>>();
@@ -50,7 +50,7 @@ namespace Same_Game_Solution.engine.visualizers
             return graph;
         }
         
-        private Graph GetGraph(Tree<Block> tree, bool bestOnly = false)
+        private static Graph GetGraph(Tree<Block> tree, bool bestOnly = false)
         {
             var graph = new Graph("graph");
             var queue = new Queue<TreeNode<Block>>();

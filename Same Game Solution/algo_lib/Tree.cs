@@ -18,7 +18,7 @@ namespace Same_Game_Solution.algo_lib
         }
 
         public bool Opened = true;
-        
+
         public double Score { get; set; }
 
         public List<TreeNode<T>> Children { get; set; }
@@ -34,6 +34,8 @@ namespace Same_Game_Solution.algo_lib
             var sb = new StringBuilder();
             // sb.Append(Score);
             sb.Append("TURN :" + Data);
+            sb.Append("\n");
+            sb.Append("OPENED :" + Opened);
             sb.Append("\n");
             sb.Append("GAME STATE :\n" + GameState);
             sb.Append("\n");
@@ -54,7 +56,7 @@ namespace Same_Game_Solution.algo_lib
 
         public TreeNode<T> Root { get; }
         public TreeNode<T> BestLeaf => GetBestLeaf();
-        
+
         public TreeNode<T> LocalRoot { get; set; }
 
         public TreeNode<T> GetNextRoot(TreeNode<T> leaf, TreeNode<T> currentRoot)
@@ -64,7 +66,7 @@ namespace Same_Game_Solution.algo_lib
                 return leaf;
             }
 
-            while (!leaf.Batya.Equals(currentRoot))
+            while (leaf.Batya != null && !leaf.Batya.Equals(currentRoot))
             {
                 if (leaf.Batya != null)
                     leaf = leaf.Batya;
@@ -97,6 +99,12 @@ namespace Same_Game_Solution.algo_lib
             var potentialLeaves = new List<TreeNode<T>>();
             var queue = new Queue<TreeNode<T>>();
             var currentRoot = GetNextRoot(GetBestLeaf(), LocalRoot);
+
+            if (LocalRoot.Children == null)
+            {
+                return new TreeNode<T>[0];
+            }
+            
             foreach (var child in LocalRoot.Children)
             {
                 if (child.Equals(currentRoot))
@@ -107,15 +115,17 @@ namespace Same_Game_Solution.algo_lib
             while (queue.Count != 0)
             {
                 var currentNode = queue.Dequeue();
-                foreach (var node in currentNode.Children)
-                {
-                    if (node.Children != null)
+                if (currentNode.Children != null)
+                    foreach (var node in currentNode.Children)
                     {
-                        node.Opened = false;
-                        potentialLeaves.Add(node);
+                        if (node.Children != null)
+                        {
+                            node.Opened = false;
+                            potentialLeaves.Add(node);
+                        }
+
+                        queue.Enqueue(node);
                     }
-                    queue.Enqueue(node);
-                }
             }
 
             return potentialLeaves;

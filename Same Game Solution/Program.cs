@@ -15,7 +15,7 @@ namespace Same_Game_Solution
 
         private static void Main(string[] args)
         {
-            var board = SameGameRepo.real15x15board;
+            var board = SameGameRepo.fiveOnFourboard;
 
             _simpleBoardGetterService = new SimpleBoardGetterService(board);
             var initialGameState = new GameState(_simpleBoardGetterService.getBoard(), 0);
@@ -24,7 +24,7 @@ namespace Same_Game_Solution
             var legals = initialGameState.legals();
             foreach (var block in legals) Console.WriteLine(block.ToString());
 
-            var beamSearchSolver = new BeamSearchSolver(1, 1, new IEstimator[] {new BoardwiseScoreEstimator(), new SimpleScoreEstimator()});
+            var beamSearchSolver = new BeamSearchSolver(2, 2, new IEstimator[] {new BeamSearchBoardwiseEstimator()});
             // var beamSearchSolver = new GreedySolver(boardwiseScoreEstimator);
             var sameGameBeamSearchSolution = beamSearchSolver.GetSolutions(initialGameState.copy()).First();
 
@@ -32,6 +32,7 @@ namespace Same_Game_Solution
             Console.WriteLine("SIMPLE SCORE GAME ! ! ! ! ! ");
             foreach (var block in sameGameBeamSearchSolution.Turns)
             {
+                // _treeVisualizer.render(beamSearchSolver.SearchTree, false);
                 Console.WriteLine(block);
                 Console.WriteLine();
                 initialGameState.deleteBlock(block);
@@ -41,7 +42,7 @@ namespace Same_Game_Solution
             Console.WriteLine();
             Console.WriteLine("FINAL SCORE:" + initialGameState.Score);
 
-            _treeVisualizer.render(beamSearchSolver.SearchTree, true);
+            _treeVisualizer.render(beamSearchSolver.SearchTree, false);
         }
     }
 }
