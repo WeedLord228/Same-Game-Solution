@@ -8,7 +8,7 @@ namespace Same_Game_Solution.algo_lib
         {
             double result = 0;
             foreach (var block in gameState.legals()) result += (block.Size - 2) * (block.Size - 2);
-
+            result += gameState.Score;
             return result;
         }
     }

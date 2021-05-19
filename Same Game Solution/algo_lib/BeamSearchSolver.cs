@@ -43,14 +43,15 @@ namespace Same_Game_Solution.algo_lib
 
                     tempBeams.Add(node);
                 }
-                
+
                 foreach (var beam in beams)
                 {
-                    if (tempBeams.Any(x=> x.Score < beam.Score && beam.GameState.Terminal))
+                    if (tempBeams.Any(x => x.Score < beam.Score && beam.GameState.Terminal))
                     {
                         tempBeams.Add(beam);
                     }
                 }
+
                 beams = tempBeams;
             }
 
@@ -73,6 +74,7 @@ namespace Same_Game_Solution.algo_lib
                 }
             }
 
+            result = result.GroupBy(x => x.Item3).Select(y => y.First()).ToList();
             result.Sort((x, y) => y.Item2.CompareTo(x.Item2));
             result = result.Take(_beamWidth).ToList();
             return result;

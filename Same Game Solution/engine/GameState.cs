@@ -9,13 +9,35 @@ namespace Same_Game_Solution.engine
 {
     public class GameState
     {
+        public override bool Equals(object? obj)
+        {
+            return obj != null && ToString().Equals(obj.ToString());
+        }
+
+        public override int GetHashCode()
+        {
+            return _hash.GetHashCode(_board);
+        }
+
+        private readonly ZobristHash _hash;
+        
         private readonly int[][] _board;
+        
 
         public GameState(int[][] board, int score, bool terminal = false)
         {
             _board = board;
             Score = score;
             Terminal = terminal;
+            var types = new HashSet<int>();
+            for (int i = 0; i < board.Length; i++)
+            {
+                for (int j = 0; j < board[0].Length; j++)
+                {
+                    types.Add(board[i][j]);
+                }
+            }
+            _hash = new ZobristHash(board.Length, board[0].Length, types);
         }
 
         public int Score { get; private set; }
@@ -24,7 +46,8 @@ namespace Same_Game_Solution.engine
 
         public void deleteBlock(Block turn)
         {
-            foreach (var (y, x) in turn.Points) _board[y][x] = -1;
+            foreach (var (y, x) in turn.Points) 
+                _board[y][x] = -1;
 
             normalizeVertically();
             normalizeHorizontally();
