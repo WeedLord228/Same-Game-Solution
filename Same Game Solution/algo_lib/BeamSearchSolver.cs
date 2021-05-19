@@ -46,7 +46,7 @@ namespace Same_Game_Solution.algo_lib
 
                 foreach (var beam in beams)
                 {
-                    if (tempBeams.Any(x => x.Score < beam.Score && beam.GameState.Terminal))
+                    if (tempBeams.Any(x => x.Score <= beam.Score && beam.GameState.Terminal))
                     {
                         tempBeams.Add(beam);
                     }

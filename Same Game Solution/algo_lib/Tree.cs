@@ -35,7 +35,7 @@ namespace Same_Game_Solution.algo_lib
             // sb.Append(Score);
             sb.Append("TURN :" + Data);
             sb.Append("\n");
-            sb.Append("OPENED :" + Opened);
+            sb.Append("TERMINAL :" + GameState.Terminal);
             sb.Append("\n");
             sb.Append("GAME STATE :\n" + GameState);
             sb.Append("\n");
